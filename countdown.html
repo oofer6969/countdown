@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: transparent;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .countdown {
+      display: flex;
+      font-size: 50px;
+      font-weight: bold;
+      gap: 15px;
+    }
+    .countdown div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .countdown span {
+      display: block;
+      transition: color 0.5s ease-in-out; /* Smooth color transition */
+    }
+    .countdown span.value {
+      transition: color 0.5s ease-in-out; /* Smooth color change on number update */
+    }
+  </style>
+</head>
+<body>
+  <div class="countdown">
+    <div id="days">
+      <span class="value">14</span><span>days</span>
+    </div>
+    <span>:</span>
+    <div id="hours">
+      <span class="value">00</span><span>hrs</span>
+    </div>
+    <span>:</span>
+    <div id="minutes">
+      <span class="value">00</span><span>min</span>
+    </div>
+    <span>:</span>
+    <div id="seconds">
+      <span class="value">00</span><span>sec</span>
+    </div>
+  </div>
+
+  <script>
+    const countdown = () => {
+      const totalTime = 336 * 60 * 60 * 1000; // 336 hours in milliseconds
+      const endTime = new Date().getTime() + totalTime;
+      
+      const updateTime = () => {
+        const now = new Date().getTime();
+        const remainingTime = endTime - now;
+
+        if (remainingTime <= 0) {
+          clearInterval(interval);
+          return;
+        }
+
+        const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+        updateCountdown("days", days);
+        updateCountdown("hours", hours);
+        updateCountdown("minutes", minutes);
+        updateCountdown("seconds", seconds);
+      };
+
+      const updateCountdown = (id, value) => {
+        const element = document.getElementById(id).children[0];
+        const newValue = String(value).padStart(2, '0');
+        
+        if (element.textContent !== newValue) {
+          resetColor(); // Reset color of all elements to white
+          element.style.color = getRandomColor(); // Change the color of the updated number
+          setTimeout(() => {
+            element.textContent = newValue;
+          }, 500); // Delay before changing the value to allow for color transition
+        }
+      };
+
+      const getRandomColor = () => {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      };
+
+      const resetColor = () => {
+        // Reset the color of all countdown number elements to white
+        const allElements = document.querySelectorAll('.countdown .value');
+        allElements.forEach((el) => {
+          el.style.color = '#fff';
+        });
+      };
+
+      const interval = setInterval(updateTime, 1000);
+      updateTime(); // Initial call to set values right away
+    };
+
+    countdown();
+  </script>
+</body>
+</html>
